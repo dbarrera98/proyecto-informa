@@ -1,1 +1,14 @@
-spring.application.name=libreria
+spring:
+  application:
+    name: libreria
+  datasource:
+    url: jdbc:postgresql://localhost:5432/libreria
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    format-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
