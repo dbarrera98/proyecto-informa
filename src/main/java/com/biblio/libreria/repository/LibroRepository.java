@@ -25,13 +25,8 @@ public class LibroRepository {
     }
 
     public List<LibroEntity> consultarLibrosPorAutor(Integer autorId) {
-        List<LibroEntity> resultado = new ArrayList<>();
-        for (LibroEntity libro : libros) {
-            if (libro.getAutorId().equals(autorId)) {
-                resultado.add(libro);
-            }
-        }
-        return resultado;
+        String sql = "SELECT * FROM libros WHERE autor_id = ?";
+        return jdbcTemplate.query(sql, this::mapRowToLibro, autorId);
     }
 
     public void insertarLibro(String titulo, Integer autorId) {
