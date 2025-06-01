@@ -15,8 +15,7 @@ services:
   - type: pserv
     name: postgres-biblio
     env: docker
-    image:
-      url: postgres:14
+    image: postgres:14
     autoDeploy: false
     envVars:
       - key: POSTGRES_DB
