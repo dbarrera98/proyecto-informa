@@ -6,25 +6,8 @@ services:
     autoDeploy: false
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://postgres-biblio:5432/libreria
+        value: jdbc:postgresql://dpg-d0tt3cidbo4c73a3b0cg-a.oregon-postgres.render.com:5432/libreria_il5o?sslmode=require
       - key: SPRING_DATASOURCE_USERNAME
-        value: postgres
+        value: libreria_il5o_user
       - key: SPRING_DATASOURCE_PASSWORD
-        value: admin
-
-  - type: pserv
-    name: postgres-biblio
-    env: postgres
-    plan: free
-    autoDeploy: false
-    envVars:
-      - key: POSTGRES_DB
-        value: libreria
-      - key: POSTGRES_USER
-        value: postgres
-      - key: POSTGRES_PASSWORD
-        value: admin
-    disk:
-      name: data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
+        value: uycbZUF1yyg27hdcwUC0rWQFdhsSUqIo
