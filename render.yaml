@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: app-biblio
+    env: docker
+    dockerfilePath: ./Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres-biblio:5432/libreria
+      - key: SPRING_DATASOURCE_USERNAME
+        value: postgres
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  - type: pserv
+    name: postgres-biblio
+    env: docker
+    image: postgres:14
+    autoDeploy: false
+    envVars:
+      - key: POSTGRES_DB
+        value: libreria
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        value: admin
+    disk:
+      name: data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
