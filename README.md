@@ -1,7 +1,8 @@
 # Librería API
 
 API REST para la gestión integral de autores y libros en una librería.  
-Desarrollada con **Spring Boot**, **PostgreSQL** y **Docker**, permite operaciones CRUD robustas y despliegue en entornos locales o de integración.
+Desarrollada con **Spring Boot**, **PostgreSQL** y **Docker**. Permite operaciones CRUD robustas y 
+despliegue en entornos locales o de integración.
 
 ---
 
@@ -9,8 +10,9 @@ Desarrollada con **Spring Boot**, **PostgreSQL** y **Docker**, permite operacion
 
 - CRUD completo para autores y libros.
 - Consulta de autores junto a sus libros asociados.
-- Inicialización automática de la base de datos con scripts SQL.
+- Inicialización automática de la base de datos con scripts PL/SQL (PL/pgSQL).
 - Despliegue reproducible mediante Docker y Docker Compose.
+- Código fuente y demo funcional disponibles.
 
 ---
 
@@ -18,6 +20,7 @@ Desarrollada con **Spring Boot**, **PostgreSQL** y **Docker**, permite operacion
 
 - Java 21
 - Docker y Docker Compose
+- Maven
 
 ---
 
@@ -30,20 +33,58 @@ git clone https://github.com/dbarrera98/proyecto-informa.git
 cd proyecto-informa
 ```
 
-### 2. Construye y levanta los servicios
+### 2. Compila el proyecto (opcional, solo si modificas el código)
+
+```bash
+mvn clean package
+```
+
+Esto generará el archivo `target/libreria-0.0.1-SNAPSHOT.jar` necesario para construir la imagen Docker de la aplicación.
+
+### 3. Construcción y despliegue con Docker Compose
+
+La forma más fácil de levantar todo —base de datos y API— es con Docker Compose:
 
 ```bash
 docker-compose up --build
 ```
 
 Esto iniciará:
-- PostgreSQL (con el script de inicialización)
-- La aplicación Spring Boot
+- **PostgreSQL** (base de datos, con el script de inicialización)
+- **La aplicación Spring Boot** (backend en Java)
 
-### 3. Acceso a la API
+Al finalizar, tendrás la API corriendo en:  
+[http://localhost:8081/api/](http://localhost:8081/api/)
 
-La API estará disponible en:  
-`http://localhost:8081/api/`
+#### Variables de entorno principales (puedes personalizarlas en `docker-compose.yml`):
+
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+
+---
+
+### 4. Construir y correr la imagen Docker manualmente (opcional)
+
+Si solo quieres la imagen de la aplicación, puedes hacerlo así:
+
+#### a) Construir la imagen
+
+```bash
+docker build -t app-biblio:1.0 .
+```
+
+#### b) Ejecutar la imagen (conexión a una base de datos existente)
+
+```bash
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<puerto>/<dbname> \
+  -e SPRING_DATASOURCE_USERNAME=<usuario> \
+  -e SPRING_DATASOURCE_PASSWORD=<contraseña> \
+  app-biblio:1.0
+```
+
+> **Nota:** Si usas Docker Compose, estos pasos se ejecutan automáticamente.
 
 ---
 
@@ -156,13 +197,24 @@ DELETE /api/libro/8
 ## Configuración
 
 - La configuración principal está en `src/main/resources/application.yml`.
-- Las variables de conexión y credenciales pueden personalizarse en `docker-compose.yml`.
+- Las variables de conexión y credenciales pueden personalizarse en `docker-compose.yml` o al crear el contenedor.
 
 ---
 
 ## Inicialización de la Base de Datos
 
-El archivo `initdb/init.sql` crea las tablas, funciones y datos iniciales de la base automáticamente al levantar el contenedor de PostgreSQL.
+El archivo [`initdb/init.sql`](initdb/init.sql) crea las tablas, funciones y datos iniciales de la base automáticamente al levantar el contenedor de PostgreSQL la primera vez.
+
+Si necesitas restaurar tu base de datos local en el contenedor:
+1. Haz un backup con `pg_dump` en tu máquina local:
+   ```bash
+   pg_dump -U postgres -d libreria > initdb/init.sql
+   ```
+2. Borra el volumen y reinicia los contenedores para aplicar el nuevo script:
+   ```bash
+   docker-compose down -v
+   docker-compose up --build
+   ```
 
 ---
 
@@ -174,8 +226,32 @@ El archivo `initdb/init.sql` crea las tablas, funciones y datos iniciales de la 
 ├── initdb/init.sql                      # Script de inicialización de la base de datos
 ├── Dockerfile                           # Imagen Docker de la app
 ├── docker-compose.yml                   # Orquestación de servicios
+├── docs/                                # Documentación e imágenes de pruebas
+│   └── img/                             # Evidencias de instalación y pruebas
+├── API_CATALOGACION.md                  # Evidencias detalladas de pruebas y uso
 └── README.md                            # Documentación principal
 ```
+
+---
+
+## Demo Funcional
+
+La API está desplegada en Railway y puede consultarse en:  
+[https://app-biblio-production-ed53.up.railway.app/api/](https://app-biblio-production-ed53.up.railway.app/api/)
+
+Ejemplos rápidos:
+- [GET /api/autor](https://app-biblio-production-ed53.up.railway.app/api/autor)
+- [GET /api/libro](https://app-biblio-production-ed53.up.railway.app/api/libro)
+
+> Puedes probar la API con Postman, cURL o tu navegador.
+
+---
+
+## Instalación y ejecución de pruebas
+
+La guía detallada de instalación, ejecución y pruebas (incluyendo imágenes ilustrativas y ejemplos en producción) está disponible en:
+
+👉 [API_CATALOGACION.md](API_CATALOGACION.md)
 
 ---
 
